@@ -1,0 +1,6 @@
+**/*.scss
+**/*.svg
+**/*.png
+
+craco.config.js
+tailwind.config.js
