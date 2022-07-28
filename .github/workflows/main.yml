@@ -41,3 +41,14 @@ jobs:
         run: yarn lint
       - name: Run audit
         run: yarn audit
+        
+  deploy:
+    needs: [build, test]
+    runs-on: ubuntu-latest
+    name: deploy
+    steps:
+      - uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          github_token: '${{ github.token }}'
+          publish_dir: ./build
