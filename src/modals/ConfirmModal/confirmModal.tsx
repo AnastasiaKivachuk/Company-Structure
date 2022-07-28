@@ -11,7 +11,7 @@ function ConfirmModal({ name, closeModal, removeNode }: Props) {
   };
   return (
     <>
-      <input type="checkbox" id="confirmModal " className="modal-toggle" checked={!!name} />
+      <input type="checkbox" id="confirmModal" className="modal-toggle" checked={!!name} onChange={() => {}} />
       <label htmlFor="confirmModal" className="modal cursor-pointer" id="confirmModalLabel">
         <div className="modal-box relative">
           <div

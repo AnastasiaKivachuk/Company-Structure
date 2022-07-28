@@ -46,7 +46,7 @@ function EmployeeModal({ closeModal, handleAddNodes, fromNodeId, handleUpdateNod
   return (
     <>
       <input type="checkbox" id="employeeModal " className="modal-toggle" checked={!!fromNodeId} />
-      <label htmlFor="employeeModal" className="modal cursor-pointer" id="employeeLabel">
+      <label htmlFor="employeeModal" className="modal" id="employeeLabel">
         <div className="modal-box relative">
           <div
             className="closeBtn"

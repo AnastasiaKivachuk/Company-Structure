@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Canvas,
-  EdgeData,
   hasLink,
   removeAndUpsertNodes,
   NodeData,
@@ -9,50 +8,69 @@ import {
 } from 'reaflow';
 import { UUID } from 'uuid-generator-ts';
 
-import Toggle from '@components/Toggle/toggle';
 import DragMove from '@components/DragMove/dragMove';
 import EmployeeModal from '@modals/EmployeeModal/employeeModal';
 import ConfirmModal from '@modals/ConfirmModal/confirmModal';
 import NodeElement from '@modules/MainPage/components/nodeElement';
 import { EmployeeInterfaces } from '@modules/MainPage/interfaces/employee.interfaces';
 import DetailsModal from '@modals/DetailsModal/detailsModal';
-import { InitEdges, InitNodes } from './utils/mockData';
+import { useDispatch, useSelector } from 'react-redux';
+import { StoreDTO } from '@redux/interfaces/store.interface';
+import { addEmployee, deleteEmployee, moveNode, updateEmployee } from '@redux/actions/actionCreator';
 
-function MainPage() {
-  const [translate, setTranslate] = useState({
-    x: -300,
-    y: -600,
-  });
+type Props = {
+  isEditMode?: boolean
+  isEditPositionMode?: boolean
+  setPositionCoordinates?: (val: {x: number, y: number}) => void
+}
+
+function MainPage({ isEditMode, isEditPositionMode, setPositionCoordinates }: Props) {
   const uuid = new UUID();
   const [fromNodeId, setFromNodeId] = useState('');
   const [selectedNodeId, setSelectedNodeId] = useState<null | NodeData>(null);
   const [selectedNodeToUpdate, setSelectedNodeToUpdate] = useState<null | NodeData>(null);
-  const [isEditMode, setEditMode] = useState(false);
-  const [nodes, setNodes] = useState<NodeData[]>(InitNodes);
-  const [isMount, setIsMount] = useState(false);
-  const [edges, setEdges] = useState<EdgeData[]>(InitEdges);
+
+  const edges = useSelector((store: StoreDTO) => store.employees.edges);
+  const nodes = useSelector((store: StoreDTO) => store.employees.employees);
+  const positionStore = useSelector((store: StoreDTO) => store.position);
+  const dispatch = useDispatch();
+  const [translate, setTranslate] = useState(positionStore);
 
   const handleDragMove = (e: MouseEvent) => {
     setTranslate({
       x: translate.x + e.movementX,
       y: translate.y + e.movementY,
     });
+
+    if (isEditPositionMode && setPositionCoordinates) {
+      setPositionCoordinates(
+        { x: translate.x + e.movementX,
+          y: translate.y + e.movementY },
+      );
+    }
   };
+
+  useEffect(() => {
+    if (isEditPositionMode) {
+      setTranslate(positionStore);
+    }
+
+  }, [isEditPositionMode, positionStore]);
 
   const handleAddNodes = useCallback((data: EmployeeInterfaces) => {
     const id = uuid.getDashFreeUUID();
     const idEdges = uuid.getDashFreeUUID();
-    setNodes([...nodes, {
+    dispatch(addEmployee({ employees: {
       id,
       height: 190,
       width: 140,
       data,
-    }]);
-    setEdges([...edges, {
+    },
+    edges: {
       id: idEdges,
       from: fromNodeId,
       to: id,
-    }]);
+    } }));
     setFromNodeId('');
   }, [nodes, fromNodeId]);
 
@@ -60,7 +78,7 @@ function MainPage() {
     const id = (selectedNodeToUpdate as any).properties?.id;
 
     const updatedNode = nodes.map((item) => (item.id === id ? { ...item, data: { ...item.data, ...data } } : item));
-    setNodes(updatedNode);
+    dispatch(updateEmployee({ employees: updatedNode }));
     setFromNodeId('');
     setSelectedNodeToUpdate(null);
   }, [selectedNodeToUpdate, nodes]);
@@ -68,26 +86,21 @@ function MainPage() {
   const handleRemoveNode = useCallback(() => {
     if (selectedNodeId !== null) {
       const result = removeAndUpsertNodes(nodes, edges, selectedNodeId);
-      setEdges(result.edges);
-      setNodes(result.nodes);
+      dispatch(deleteEmployee({ employees: result.nodes,
+        edges: result.edges }));
     }
   }, [selectedNodeId, nodes, edges]);
 
-  const createNode = (node: NodeProps) => {
-    const children = nodes.filter((n) => n.parent && n?.parent === node?.id);
-    const notDraggable = !isEditMode || children.length > 3;
-
-    return (
-      <NodeElement
-        isEditMode={isEditMode}
-        node={node}
-        notDraggable={notDraggable}
-        setFromNodeId={setFromNodeId}
-        setSelectedNodeId={setSelectedNodeId}
-        setSelectedNodeToUpdateId={setSelectedNodeToUpdate}
-      />
-    );
-  };
+  const createNode = (node: NodeProps) => (
+    <NodeElement
+      isEditMode={!!isEditMode}
+      node={node}
+      notDraggable={!isEditMode}
+      setFromNodeId={setFromNodeId}
+      setSelectedNodeId={setSelectedNodeId}
+      setSelectedNodeToUpdateId={setSelectedNodeToUpdate}
+    />
+  );
 
   const onNodeLinkCheck = useCallback((_event: any, from: NodeData, to: NodeData) => {
     if (from.id === to.id) {
@@ -98,11 +111,8 @@ function MainPage() {
       return false;
     }
 
-    if (hasLink(edges, to, from)) {
-      return false;
-    }
+    return !hasLink(edges, to, from);
 
-    return true;
   }, []);
 
   const onNodeLink = useCallback((_event: any, from: NodeData, to: NodeData) => {
@@ -111,7 +121,6 @@ function MainPage() {
       edges,
       from,
     );
-
     if ((from.parent || to.parent) && from.parent !== to.parent) {
       const newNodes = nodes.map((n) => (
         n.id === from.id
@@ -119,48 +128,37 @@ function MainPage() {
           : { ...n }
       ));
       from.parent = to.parent;
-      setNodes(newNodes);
+      dispatch(moveNode({ employees: newNodes }));
     }
-
-    setEdges([
+    dispatch(moveNode({ edges: [
       ...result.edges,
       createEdgeFromNodes(to, from),
-    ]);
+    ] }));
   }, [nodes, edges]);
-
-  useEffect(() => setIsMount(true), []);
 
   return (
     <>
-      <div className="bg-gray-light">
-        <h1 className="text-center text-purple h1">Company Structure</h1>
-        <div className="flex justify-end">
-          <Toggle isEditMode={isEditMode} setEditMode={setEditMode} />
-        </div>
+
+      <div className="relative overflow-hidden w-screen max-w-full max-h-full w-screen h-[calc(100vh-100px)]">
+        <DragMove onDragMove={handleDragMove} className="cursor-grab" isEditMode={!!isEditMode}>
+          <div
+            className="wrapCanvas"
+            style={{ transform: `translate(${translate.x}px, ${translate.y}px)` }}
+          >
+            <Canvas
+              className="!overflow-visible"
+              nodes={nodes}
+              edges={edges}
+              node={createNode}
+              onNodeLinkCheck={onNodeLinkCheck}
+              onNodeLink={onNodeLink}
+            />
+
+          </div>
+        </DragMove>
       </div>
-      {isMount && (
-        <div className="relative overflow-hidden w-screen max-w-full max-h-full w-screen h-[calc(100vh-100px)]">
-          <DragMove onDragMove={handleDragMove} className="cursor-grab" isEditMode={isEditMode}>
-            <div
-              className="wrapCanvas"
-              style={{ transform: `translate(${translate.x}px, ${translate.y}px)` }}
-            >
-              <Canvas
-                className="!overflow-visible"
-                nodes={nodes}
-                edges={edges}
-                node={createNode}
-                onNodeLinkCheck={onNodeLinkCheck}
-                onNodeLink={onNodeLink}
-              />
-
-            </div>
-          </DragMove>
-        </div>
-      )}
-
       <DetailsModal
-        isEditMode={isEditMode}
+        isEditMode={!!isEditMode}
         selectedNodeToUpdate={selectedNodeToUpdate}
         setFromNodeId={setFromNodeId}
         closeModal={() => setSelectedNodeToUpdate(null)}
@@ -180,5 +178,11 @@ function MainPage() {
     </>
   );
 }
+
+MainPage.defaultProps = {
+  isEditMode: false,
+  isEditPositionMode: false,
+  setPositionCoordinates: () => {},
+};
 
 export default MainPage;

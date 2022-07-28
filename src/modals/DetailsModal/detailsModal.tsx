@@ -12,7 +12,7 @@ function DetailsModal({ closeModal, selectedNodeToUpdate, isEditMode, setFromNod
   return (
     <>
       <input type="checkbox" id="DetailsModal " className="modal-toggle" checked={!!selectedNodeToUpdate} />
-      <label htmlFor="DetailsModal" className="modal cursor-pointer" id="DetailsModal">
+      <label htmlFor="DetailsModal" className="modal" id="DetailsModal">
         <div className="modal-box relative">
           <div
             className="closeBtn"
