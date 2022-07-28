@@ -24,7 +24,7 @@ jobs:
 
     strategy:
         matrix:
-          node: [ 14, 16 ]
+          node: [ 16 ]
     name: run build on node v${{ matrix.node }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -55,5 +55,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
         with:
-          github_token: ${{ secrets.PRIVATE_ACTIONS_DEPLOY_KEY }}
+          token: '${{ github.token }}'
           publish_dir: ./build
