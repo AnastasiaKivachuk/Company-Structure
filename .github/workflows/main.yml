@@ -24,3 +24,20 @@ jobs:
         run: yarn install
       - name: Build
         run: yarn build
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ 16 ]
+    name: run test
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install dependencies
+        run: yarn install
+      - name: Run lint
+        run: yarn lint
+      - name: Run audit
+        run: yarn audit
