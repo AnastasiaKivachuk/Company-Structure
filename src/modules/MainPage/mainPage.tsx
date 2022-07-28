@@ -1,10 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Canvas,
-  hasLink,
   removeAndUpsertNodes,
   NodeData,
-  NodeProps, createEdgeFromNodes,
+  NodeProps, createEdgeFromNodes, detectCircular,
 } from 'reaflow';
 import { UUID } from 'uuid-generator-ts';
 
@@ -103,19 +102,16 @@ function MainPage({ isEditMode, isEditPositionMode, setPositionCoordinates }: Pr
   );
 
   const onNodeLinkCheck = useCallback((_event: any, from: NodeData, to: NodeData) => {
+
     if (from.id === to.id) {
       return false;
     }
-
-    if (from.id === to.parent) {
-      return false;
-    }
-
-    return !hasLink(edges, to, from);
+    return !detectCircular(nodes, edges, to, from);
 
   }, []);
 
   const onNodeLink = useCallback((_event: any, from: NodeData, to: NodeData) => {
+
     const result = removeAndUpsertNodes(
       nodes,
       edges,
@@ -130,6 +126,7 @@ function MainPage({ isEditMode, isEditPositionMode, setPositionCoordinates }: Pr
       from.parent = to.parent;
       dispatch(moveNode({ employees: newNodes }));
     }
+
     dispatch(moveNode({ edges: [
       ...result.edges,
       createEdgeFromNodes(to, from),
