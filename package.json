@@ -2,6 +2,7 @@
   "name": "company-structure",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://AnastasiaKivachuk.github.io/Company-Structure",
   "scripts": {
     "start": "craco start",
     "build": "craco build",
