@@ -1,22 +1,17 @@
 # This is a basic workflow to help you get started with Actions
-
 name: CI
 
 on:
-
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
       CI: false
-
     strategy:
         matrix:
           node: [ 16 ]
@@ -55,14 +50,3 @@ jobs:
 
       - name: Run audit
         run: yarn audit
-
-  deploy:
-    needs: [build, test]
-    runs-on: ubuntu-latest
-    name: deploy
-    steps:
-      - uses: peaceiris/actions-gh-pages@v3
-        if: ${{ github.ref == 'refs/heads/main' }}
-        with:
-          github_token: '${{ github.token }}'
-          publish_dir: ./build
