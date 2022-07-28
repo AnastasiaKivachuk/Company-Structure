@@ -59,22 +59,9 @@ jobs:
   deploy:
     needs: [build, test]
     runs-on: ubuntu-latest
-    env:
-      CI: false
-
-    strategy:
-      matrix:
-        node: [ 16 ]
     name: deploy
-
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node }}
-      - name: Install dependencies
-        run: yarn install
-
       - name: Deploy
       - uses: peaceiris/actions-gh-pages@v3
         if: ${{ github.ref == 'refs/heads/main' }}
