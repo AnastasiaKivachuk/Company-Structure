@@ -11,8 +11,6 @@ module.exports = {
             '@redux': path.resolve(__dirname, 'src/redux'),
             '@utils': path.resolve(__dirname, 'src/utils'),
             '@validation': path.resolve(__dirname, 'src/common/validation'),
-
-
         },
     },
 };

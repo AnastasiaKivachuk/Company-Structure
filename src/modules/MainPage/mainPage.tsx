@@ -135,8 +135,7 @@ function MainPage({ isEditMode, isEditPositionMode, setPositionCoordinates }: Pr
 
   return (
     <>
-
-      <div className="relative overflow-hidden w-screen max-w-full max-h-full w-screen h-[calc(100vh-100px)]">
+      <div className="relative overflow-hidden w-screen max-w-full max-h-full w-screen h-[calc(100vh-100px)] bg-white">
         <DragMove onDragMove={handleDragMove} className="cursor-grab" isEditMode={!!isEditMode}>
           <div
             className="wrapCanvas"
