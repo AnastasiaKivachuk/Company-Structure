@@ -7,6 +7,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "react-scripts test",
+    "test:coverage": "react-scripts test --coverage",
     "lint": "eslint .",
     "eslint:fix": "eslint --fix",
     "audit": "audit-ci --config audit-ci.json"
@@ -15,7 +16,7 @@
     "@craco/craco": "^6.4.5",
     "@hookform/resolvers": "^2.9.6",
     "@tailwindcss/typography": "^0.5.4",
-    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
     "@types/jest": "^27.0.1",
@@ -31,6 +32,7 @@
     "react-scripts": "5.0.1",
     "reaflow": "^5.0.6",
     "redux": "^4.2.0",
+    "redux-mock-store": "^1.5.4",
     "redux-saga": "^1.1.3",
     "typescript": "^4.4.2",
     "uuid-generator-ts": "^1.1.0",
@@ -40,6 +42,7 @@
     "@babel/core": "^7.18.6",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
+    "@types/redux-mock-store": "^1.0.3",
     "@typescript-eslint/eslint-plugin": "^5.28.0",
     "@typescript-eslint/parser": "^5.28.0",
     "audit-ci": "^3.1.1",
@@ -60,6 +63,45 @@
     "prettier-eslint": "^15.0.1",
     "tailwindcss": "^3.1.6",
     "typescript": "4.7.4"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "@src/(.*)": "<rootDir>/src/$1",
+      "@constants/(.*)": "<rootDir>/src/common/constants/$1",
+      "@interfaces/(.*)": "<rootDir>/src/common/interfaces/$1",
+      "@redux/(.*)": "<rootDir>/src/redux/$1",
+      "@helpers/(.*)": "<rootDir>/src/common/helpers/$1",
+      "@services/(.*)": "<rootDir>/src/services/$1",
+      "@modules/(.*)": "<rootDir>/src/modules/$1",
+      "@hookform/(.*)": "<rootDir>/node_modules/@hookform/$1",
+      "@components/(.*)": "<rootDir>/src/common/components/$1",
+      "@validation/(.*)": "<rootDir>/src/common/validation/$1",
+      "@modals/(.*)": "<rootDir>/src/modals/$1"
+    },
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/common/interfaces",
+      "<rootDir>/src/common/constants",
+      "<rootDir>/src/common/validation",
+      "<rootDir>/src/redux/store.ts",
+      "<rootDir>/src/redux/actions",
+      "<rootDir>/src/redux/reducers/index.ts",
+      "<rootDir>/src/redux/interfaces",
+      "<rootDir>/src/index.ts",
+      "<rootDir>/src/modules/MainPage/interfaces",
+      "<rootDir>/src/modules/MainPage/utils",
+      "<rootDir>/src/modals/EmployeeModal/validation"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 0,
+        "functions": 0,
+        "lines": 0,
+        "statements": 0
+      }
+    }
   },
   "resolutions": {
     "trim-newlines": "^3.0.1",

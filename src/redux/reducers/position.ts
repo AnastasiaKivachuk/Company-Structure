@@ -5,7 +5,7 @@ const initialState = {
   y: -1000,
 };
 
-const employees = (state = initialState, { type, payload }: {type: string, payload: any}) => {
+const position = (state = initialState, { type, payload }: {type: string, payload: any}) => {
   switch (type) {
     case SET_INIT_POSITION:
       return {
@@ -17,4 +17,4 @@ const employees = (state = initialState, { type, payload }: {type: string, paylo
   }
 };
 
-export default employees;
+export default position;

@@ -30,12 +30,13 @@ function Layout({ children }: Props) {
   return (
     <>
       <div className="bg-gray-light">
-        <h1 className="text-center text-purple h1">Company Structure</h1>
+        <h1 className="text-center text-purple h1" data-testid="titlePage">Company Structure</h1>
         <div className={`flex ${isEditMode ? 'justify-between' : 'justify-end'}`}>
           {isEditMode && !isEditPositionMode && (
             <button
               className="btn btn-sm btn-active btn-primary mx-2"
               onClick={handleEditPositionMode}
+              data-testid="changeBtn"
             >Change init structure position
             </button>
           )}
@@ -45,7 +46,7 @@ function Layout({ children }: Props) {
               <button className="btn btn-sm btn-outline" onClick={handleEditPositionMode}>Cancel</button>
             </div>
           )}
-          <Toggle isEditMode={isEditMode} setEditMode={setEditMode} />
+          <Toggle isEditMode={isEditMode} setEditMode={setEditMode} data-testid="toggle" />
         </div>
       </div>
       {isMount && childrenWithAddedProps }

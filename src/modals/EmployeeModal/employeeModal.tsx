@@ -4,12 +4,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { EmployeeInterfaces } from '@modules/MainPage/interfaces/employee.interfaces';
 import { NodeData } from 'reaflow';
-import { FIELD_NAMES, schema } from './employeeModal.validation';
+import { FIELD_NAMES, schema } from './validation/employeeModal.validation';
 
 type Props = {
   closeModal: () => void, handleAddNodes: (data: EmployeeInterfaces) => void
   fromNodeId: string,
-  handleUpdateNodes: (data: EmployeeInterfaces) => void
+  handleUpdateNodes: (data: EmployeeInterfaces) => void,
   selectedNodeToUpdate: NodeData | null
 }
 
@@ -45,16 +45,17 @@ function EmployeeModal({ closeModal, handleAddNodes, fromNodeId, handleUpdateNod
 
   return (
     <>
-      <input type="checkbox" id="employeeModal " className="modal-toggle" checked={!!fromNodeId} />
+      <input type="checkbox" id="employeeModal " className="modal-toggle" checked={!!fromNodeId} onChange={() => {}} />
       <label htmlFor="employeeModal" className="modal" id="employeeLabel">
         <div className="modal-box relative">
           <div
             className="closeBtn"
             onClick={closeModal}
             role="presentation"
+            data-testid="closeBtn"
           >✕
           </div>
-          <h3 className="text-lg font-bold">{ selectedNodeToUpdate ? 'Edit' : 'Add New' } Employee</h3>
+          <h3 className="text-lg font-bold" data-testid="title">{ selectedNodeToUpdate ? 'Edit' : 'Add New' } Employee</h3>
           <form onSubmit={handleSubmit(onSubmit)}>
             <Controller
               name={FIELD_NAMES.NAME}
@@ -71,6 +72,7 @@ function EmployeeModal({ closeModal, handleAddNodes, fromNodeId, handleUpdateNod
                     name={FIELD_NAMES.NAME}
                     value={value}
                     onChange={onValueChange}
+                    data-testid="fieldName"
                   />
                   {error?.message && <div className="error">{error?.message}</div>}
                 </div>
@@ -117,8 +119,8 @@ function EmployeeModal({ closeModal, handleAddNodes, fromNodeId, handleUpdateNod
               )}
             />
             <div className="flex gap-3 justify-end mt-3">
-              <button className="primaryBtn" type="submit">Yes</button>
-              <button className="outlineBtn" onClick={closeModal}>Cancel</button>
+              <button className="primaryBtn" type="submit" data-testid="positiveBtn">Yes</button>
+              <button className="outlineBtn" onClick={closeModal} data-testid="negativeBtn">Cancel</button>
             </div>
           </form>
         </div>

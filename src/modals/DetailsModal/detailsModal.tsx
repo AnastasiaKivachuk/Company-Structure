@@ -4,7 +4,7 @@ import { NodeData } from 'reaflow';
 type Props = {
   isEditMode: boolean,
   closeModal: () => void,
-  selectedNodeToUpdate: NodeData | null
+  selectedNodeToUpdate: NodeData | null,
   setFromNodeId: (val: string) => void
 }
 
@@ -18,18 +18,19 @@ function DetailsModal({ closeModal, selectedNodeToUpdate, isEditMode, setFromNod
             className="closeBtn"
             onClick={closeModal}
             role="presentation"
+            data-testid="closeBtn"
           >✕
           </div>
           {selectedNodeToUpdate && (
             <>
-
-              <h2 className="text-center text-2xl py-2">{(selectedNodeToUpdate as any).properties?.data?.name}</h2>
+              <h2 className="text-center text-2xl py-2" data-testid="title">{(selectedNodeToUpdate as any).properties?.data?.name}</h2>
               <img
                 className="w-48 h-48 object-cover m-auto"
                 src={(selectedNodeToUpdate as any).properties?.data?.photoUrl}
                 alt={(selectedNodeToUpdate as any).properties?.data?.name}
+                data-testid="img"
               />
-              <p className="text-center text-xl py-2">{(selectedNodeToUpdate as any).properties?.data?.position}</p>
+              <p className="text-center text-xl py-2" data-testid="position">{(selectedNodeToUpdate as any).properties?.data?.position}</p>
             </>
           )}
 
@@ -37,6 +38,7 @@ function DetailsModal({ closeModal, selectedNodeToUpdate, isEditMode, setFromNod
             <button
               className="primaryBtn flex m-auto"
               onClick={() => setFromNodeId(selectedNodeToUpdate?.id as string)}
+              data-testid="updateBtn"
             >Update profile
             </button>
           )}
