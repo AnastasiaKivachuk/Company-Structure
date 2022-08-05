@@ -1,9 +1,7 @@
+import { DEFAULT_POSITION } from '@constants/global.constants';
 import { SET_INIT_POSITION } from '../constants';
 
-const initialState = {
-  x: -1000,
-  y: -1000,
-};
+const initialState = DEFAULT_POSITION;
 
 const position = (state = initialState, { type, payload }: {type: string, payload: any}) => {
   switch (type) {

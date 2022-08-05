@@ -3,7 +3,7 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 
 import { getLocalStorageItem, setLocalStorageItem } from '@helpers/localStorage.helpers';
-import { LOCAL_STORAGE_EMPLOYEES, LOCAL_STORAGE_POSITION } from '@constants/global.constants';
+import { DEFAULT_POSITION, LOCAL_STORAGE_EMPLOYEES, LOCAL_STORAGE_POSITION } from '@constants/global.constants';
 import { InitEdges, InitNodes } from '@modules/MainPage/utils/mockData';
 import { StoreDTO } from '@redux/interfaces/store.interface';
 import reducer from './reducers';
@@ -17,7 +17,7 @@ const loadFromLocalStorage = () => {
   const localStorageInfo = getLocalStorageItem(LOCAL_STORAGE_EMPLOYEES);
   const localStoragePosition = getLocalStorageItem(LOCAL_STORAGE_POSITION);
   const employees = localStorageInfo ? JSON.parse(localStorageInfo) : { employees: InitNodes, edges: InitEdges };
-  const position = localStoragePosition ? JSON.parse(localStoragePosition) : { x: -1000, y: -1000 };
+  const position = localStoragePosition ? JSON.parse(localStoragePosition) : DEFAULT_POSITION;
   return { employees, position };
 };
 
